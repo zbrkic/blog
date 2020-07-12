@@ -1,0 +1,22 @@
+version: "3"
+services:
+  blog:
+    image: "jekyll/jekyll:3.8"
+    container_name: blog
+    working_dir: /srv/jekyll
+    command: ["sh","-c", "bundle install && bundle exec jekyll serve --host 0.0.0.0 --force_polling --incremental --drafts --trace"]
+    ports:
+      - "4000:4000"
+    volumes:
+      - ..:/srv/jekyll
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "1m"
+        max-file: "5"
+    restart: always
+    healthcheck:
+      test: ["CMD", "nc", "-z", "localhost", "4000"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
